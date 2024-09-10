@@ -1,0 +1,30 @@
+﻿name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+        
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      
+    - uses: actions/setup-dotnet@v2
+      with:
+          dotnet-version: '8.0.x'
+
+    - name: Extract version from tag name
+      uses: olegtarasov/get-tag@v2.1
+      id: tagName
+      
+    - name: Build
+      run: dotnet build --configuration Release /p:Version=${{ steps.tagName.outputs.tag }} /p:FileVersion=${{ steps.tagName.outputs.tag }} /p:AssemblyVersion=${{ steps.tagName.outputs.tag }}
+      
+    - name: Pack
+      run: dotnet pack --configuration Release /p:PackageVersion=${{ steps.tagName.outputs.tag }} /p:Version=${{ steps.tagName.outputs.tag }} /p:FileVersion=${{ steps.tagName.outputs.tag }} /p:AssemblyVersion=${{ steps.tagName.outputs.tag }}
+
+    - name: Push nuget package
+      run: dotnet nuget push ./NxJestMerge/nupkg/*.nupkg --skip-duplicate -k ${{ secrets.NUGET_KEY }} --no-symbols -s https://api.nuget.org/v3/index.json

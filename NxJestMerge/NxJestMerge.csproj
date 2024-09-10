@@ -6,6 +6,17 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
+	
+	<PropertyGroup>
+		<PackAsTool>true</PackAsTool>
+		<ToolCommandName>nxjestmerge</ToolCommandName>
+		<PackageOutputPath>./nupkg</PackageOutputPath>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Description>Merges all tests in NX projects into a single file that can be executed faster.</Description>
+		<Title>NxJestMerge</Title>
+		<PackageProjectUrl>https://github.com/grollmus/NxJestMerge</PackageProjectUrl>
+		<Authors>Grollmus München GmbH</Authors>		
+	</PropertyGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="Cocona" Version="2.2.0" />
