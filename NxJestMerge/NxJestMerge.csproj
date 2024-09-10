@@ -15,8 +15,13 @@
 		<Description>Merges all tests in NX projects into a single file that can be executed faster.</Description>
 		<Title>NxJestMerge</Title>
 		<PackageProjectUrl>https://github.com/grollmus/NxJestMerge</PackageProjectUrl>
-		<Authors>Grollmus München GmbH</Authors>		
+		<Authors>Grollmus München GmbH</Authors>
+		<PackageReadmeFile>Readme.md</PackageReadmeFile>
 	</PropertyGroup>
+	
+	<ItemGroup>
+		<None Include="..\Readme.md" Pack="true" PackagePath="\"/>
+	</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="Cocona" Version="2.2.0" />
