@@ -6,7 +6,7 @@ internal sealed class ProjectSearcher
 {
 	public ProjectSearcher(string root)
 	{
-		_root = root;
+		_root = Path.GetFullPath(root);
 	}
 
 	public IEnumerable<NxProject> FindProjects()
