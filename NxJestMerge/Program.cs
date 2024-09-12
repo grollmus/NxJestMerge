@@ -27,7 +27,8 @@ app.AddCommand(async ([Argument(Description = "Root path of your nx workspace")]
 			project.SourceRoot);
 
 		var targetFileName = Path.Combine(project.SourceRoot, "test-files-bundle.spec.ts");
-		File.Delete(targetFileName);
+		if(File.Exists(targetFileName))
+			File.Delete(targetFileName);
 
 		var files = matcher.GetResultsInFullPath(project.SourceRoot);
 
