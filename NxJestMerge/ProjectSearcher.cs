@@ -1,11 +1,13 @@
 ﻿using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace NxJestMerge;
 
 internal sealed class ProjectSearcher
 {
-	public ProjectSearcher(string root)
+	public ProjectSearcher(string root, ILogger logger)
 	{
+		_logger = logger;
 		_root = Path.GetFullPath(root);
 	}
 
@@ -15,15 +17,27 @@ internal sealed class ProjectSearcher
 
 		foreach (var file in projectFiles)
 		{
-			var content = File.ReadAllText(file);
-			var project = JsonSerializer.Deserialize<NxProject>(content) ??
-			              throw new InvalidOperationException("Failed to deserialize project.json");
+			NxProject? project = null;
 
-			project = project with { SourceRoot = Path.GetFullPath(project.SourceRoot, _root) };
+			try
+			{
+				var content = File.ReadAllText(file);
 
-			yield return project;
+				project = JsonSerializer.Deserialize<NxProject>(content) ??
+				          throw new InvalidOperationException("Failed to deserialize project.json");
+
+				project = project with { SourceRoot = Path.GetFullPath(project.SourceRoot, _root) };
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError("Failed to read project file {file}: {message}", file, ex.Message);
+			}
+
+			if (project is not null)
+				yield return project;
 		}
 	}
 
+	private readonly ILogger _logger;
 	private readonly string _root;
 }

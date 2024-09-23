@@ -15,7 +15,7 @@ app.AddCommand(async ([Argument(Description = "Root path of your nx workspace")]
 {
 	logger.LogDebug("Root path: {root}", root);
 
-	var searcher = new ProjectSearcher(root);
+	var searcher = new ProjectSearcher(root, logger);
 	var matcher = new Matcher(StringComparison.Ordinal);
 	matcher.AddInclude(searchPattern);
 
