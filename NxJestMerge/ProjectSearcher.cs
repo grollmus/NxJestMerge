@@ -1,19 +1,25 @@
 ﻿using System.Text.Json;
+using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.Logging;
 
 namespace NxJestMerge;
 
 internal sealed class ProjectSearcher
 {
-	public ProjectSearcher(string root, ILogger logger)
+	public ProjectSearcher(string root, string[] excludes, ILogger logger)
 	{
+		_excludes = excludes;
 		_logger = logger;
 		_root = Path.GetFullPath(root);
 	}
 
 	public IEnumerable<NxProject> FindProjects()
 	{
-		var projectFiles = Directory.GetFiles(_root, "project.json", SearchOption.AllDirectories);
+		var matcher = new Matcher(StringComparison.Ordinal);
+		matcher.AddInclude("**/project.json");
+		matcher.AddExcludePatterns(_excludes);
+
+		var projectFiles = matcher.GetResultsInFullPath(_root);
 
 		foreach (var file in projectFiles)
 		{
@@ -38,6 +44,7 @@ internal sealed class ProjectSearcher
 		}
 	}
 
+	private readonly string[] _excludes;
 	private readonly ILogger _logger;
 	private readonly string _root;
 }
