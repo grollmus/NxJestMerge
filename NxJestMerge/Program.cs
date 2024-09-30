@@ -45,18 +45,41 @@ app.AddCommand(async ([Argument(Description = "Root path of your nx workspace")]
 			code.AppendLine(data.Code);
 			code.AppendLine("}");
 			imports.AddRange(data.Imports);
+		}
+
+		await using var targetWriter = new StreamWriter(targetFileName);
+
+		var mergedImports = ImportMerger.Merge(imports);
+
+		foreach (var import in mergedImports)
+		{
+			await targetWriter.WriteLineAsync(import.ToString());
+		}
+
+		await targetWriter.WriteAsync(code);
+	}
+});
+
+app.AddCommand("clear", ([Argument(Description = "Root path of your nx workspace")] string root,
+	ILogger<Program> logger) =>
+{
+	var searcher = new ProjectSearcher(root, logger);
+	var matcher = new Matcher(StringComparison.Ordinal);
+	matcher.AddInclude(searchPattern);
+
+	var projects = searcher.FindProjects().ToArray();
 
 
-			await using var targetWriter = new StreamWriter(targetFileName);
-
-			var mergedImports = ImportMerger.Merge(imports);
-
-			foreach (var import in mergedImports)
-			{
-				await targetWriter.WriteLineAsync(import.ToString());
-			}
-
-			await targetWriter.WriteAsync(code);
+	foreach (var project in projects)
+	{
+		logger.LogDebug("Project: {name}, Source root: {sourceRoot}", project.Name,
+			project.SourceRoot);
+		
+		var targetFileName = Path.Combine(project.SourceRoot, "test-files-bundle.spec.ts");
+		if (File.Exists(targetFileName))
+		{
+			logger.LogDebug("Deleting {file}", targetFileName);
+			File.Delete(targetFileName);
 		}
 	}
 });
