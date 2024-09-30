@@ -22,6 +22,9 @@ jobs:
       
     - name: Build
       run: dotnet build --configuration Release /p:Version=${{ steps.tagName.outputs.tag }} /p:FileVersion=${{ steps.tagName.outputs.tag }} /p:AssemblyVersion=${{ steps.tagName.outputs.tag }}
+
+    - name: Test
+      run: dotnet test --configuration Release --no-build
       
     - name: Pack
       run: dotnet pack --configuration Release /p:PackageVersion=${{ steps.tagName.outputs.tag }} /p:Version=${{ steps.tagName.outputs.tag }} /p:FileVersion=${{ steps.tagName.outputs.tag }} /p:AssemblyVersion=${{ steps.tagName.outputs.tag }}

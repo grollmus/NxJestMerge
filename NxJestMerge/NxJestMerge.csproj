@@ -6,7 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
-	
+
 	<PropertyGroup>
 		<PackAsTool>true</PackAsTool>
 		<ToolCommandName>nxjestmerge</ToolCommandName>
@@ -18,14 +18,23 @@
 		<Authors>Grollmus München GmbH</Authors>
 		<PackageReadmeFile>Readme.md</PackageReadmeFile>
 	</PropertyGroup>
-	
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>NxJestMerge.Tests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
 	<ItemGroup>
 		<None Include="..\Readme.md" Pack="true" PackagePath="\"/>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Cocona" Version="2.2.0" />
-	  <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="8.0.0" />
+		<PackageReference Include="Cocona" Version="2.2.0"/>
+		<PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="8.0.0"/>
 	</ItemGroup>
 
 </Project>
