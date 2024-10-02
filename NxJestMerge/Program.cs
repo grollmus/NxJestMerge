@@ -48,6 +48,7 @@ app.AddCommand("merge", async (
 
 			var data = ImportParser.SplitContent(content, file);
 
+			code.AppendLine(data.Mocks);
 			code.AppendLine("{");
 			code.AppendLine(data.Code);
 			code.AppendLine("}");

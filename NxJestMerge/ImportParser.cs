@@ -66,7 +66,59 @@ internal class ImportParser
 				code.AppendLine(line);
 		}
 
-		return new FileContent(code.ToString(), imports.ToArray());
+		var (mocks, codeContent) = ExtractMocks(code.ToString());
+
+		return new FileContent
+		{
+			Code = codeContent,
+			Imports = imports.ToArray(),
+			Mocks = mocks
+		};
+	}
+
+	private static (string Mocks, string Code) ExtractMocks(string content)
+	{
+		if (!content.Contains("jest.mock", StringComparison.Ordinal))
+			return ("", content);
+
+		var mocks = new StringBuilder();
+		var code = new StringBuilder();
+
+		var startIndex = 0;
+		int index;
+		while ((index = content.IndexOf("jest.mock", startIndex, StringComparison.Ordinal)) != -1)
+		{
+			code.AppendLine(content.Substring(startIndex, index - startIndex));
+
+			var endIndex = FindEndOfStatement(content, index);
+			var mock = content.Substring(index, endIndex - index + 1);
+			mocks.AppendLine(mock);
+
+			startIndex = endIndex;
+		}
+
+		if (startIndex < content.Length)
+			code.AppendLine(content[(startIndex+1)..]);
+
+		return (mocks.ToString(), code.ToString());
+	}
+
+	private static int FindEndOfStatement(string content, int index)
+	{
+		var bracketCount = 0;
+
+		for (; index < content.Length; ++index)
+		{
+			if (content[index] == '(')
+				bracketCount++;
+			else if (content[index] == ')')
+				bracketCount--;
+
+			if (content[index] == ';' && bracketCount == 0)
+				return index;
+		}
+
+		return -1;
 	}
 
 	private static string ToAbsolutePath(string module, string filePath)
