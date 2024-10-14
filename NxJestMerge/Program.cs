@@ -5,7 +5,12 @@ using Microsoft.Extensions.Logging;
 using NxJestMerge;
 
 var builder = CoconaApp.CreateBuilder();
-builder.Logging.AddConsole().SetMinimumLevel(LogLevel.Trace);
+builder.Logging.AddConsole()
+	#if DEBUG
+	.SetMinimumLevel(LogLevel.Trace);
+#else
+	.SetMinimumLevel(LogLevel.Warning);
+#endif
 var app = builder.Build();
 
 const string searchPattern = "**/*.spec.ts";
